@@ -11,15 +11,33 @@
 */
 using namespace std;
 /*
+    Para poder hallar el mcd usamos el algoritmo de Euclides. Usamos el 
+    paradigma de la Recursividad para poder hacerlo.
+*/
+InfInt Mcd(InfInt a,InfInt b){
+    if(b!=0)
+        return Mcd(b,a%b);
+    return a;
+}
+/*
     La estructura RSAFUNCIONES sera con funciones staticas 
     porque no necesitaremos crear objetos, solo usar sus funciones
 */
 struct RSAFUNCIONES{
     static void Generar(){
         InfInt primo1,primo2,n,fi,cpublica,cprivada;
+        /*
+            cplubica -> e
+            cprivada -> d
+        */
         cout<<"Escribe el primer numero primo";cin>>primo1;
         cout<<"Escribre el segundo numero primo";cin>>primo2;
-
+        n = primo1*primo2;
+        fi = (primo1-1)*(primo2-1);
+        do{
+            cout<<"Escribe e: ";cin>>cpublica;
+        }while (!(cpublica<fi && Mcd(cpublica,fi)==1));
+        
     }
     static vector<InfInt> Encriptar(string mensaje,InfInt modulo,InfInt e){
 
