@@ -35,7 +35,20 @@ tuple<InfInt,InfInt,InfInt> Euclides(InfInt a,InfInt b){
     tie(mcd,x,y)=Euclides(b%a,a);
     return make_tuple(mcd,y-(b/a)*x,x);
 }
-
+/*
+---------------------ModuloPotencia-----------------------------
+Se relizara esta funcion para poder hallar la potencia de cada caracter
+del mensaje elevado a la clave publica multiplicado por n que es el modulo
+*/
+InfInt ModuloPotencia(InfInt base,integer_sequence exponente,InfInt modulo){
+    InfInt resultado =1;
+    while (--exponente>=0)
+    {
+        resultado =resultado*base;
+        r%=modulo;
+    }
+    return resultado;
+}
 /*
     -----------------RSAFUNCIONES-------------------------------
     La estructura RSAFUNCIONES sera con funciones staticas 
@@ -56,17 +69,21 @@ struct RSAFUNCIONES{
             cout<<"Escribe e: ";cin>>cpublica;
         }while (!(cpublica<fi && Mcd(cpublica,fi)==1));
         cprivada=get<1>(Euclides(cpublica,fi));
-        while (cprivada<0)
+        while (cprivada<0){
             cprivada=cprivada+fi;
-        
+        }
         //IMPRIMIENDO LAS CLAVES
-            cout<<"Modulo: "<<n<<endl;
-            cout<<"Clave Publica: "<<cpublica<<endl;
-            cout<<"Clave Privada: "<<cprivada<<endl;
+        cout<<"Modulo: "<<n<<endl;
+        cout<<"Clave Publica: "<<cpublica<<endl;
+        cout<<"Clave Privada: "<<cprivada<<endl;
         
     }
-    static vector<InfInt> Encriptar(string mensaje,InfInt modulo,InfInt e){
-
+    static vector<InfInt> Encriptar(string mensaje,InfInt cpublica, InfInt modulo){
+        vector<InfInt> resultado;
+        for(auto c : mensaje){
+            resultado.push_back(ModuloPotencia((int)c,cpublica,modulo));
+        }
+        return resultado;
     }
     static string Desencriptar(string mensaje,InfInt modulo,InfInt e){
 
