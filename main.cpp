@@ -56,6 +56,14 @@ struct RSAFUNCIONES{
             cout<<"Escribe e: ";cin>>cpublica;
         }while (!(cpublica<fi && Mcd(cpublica,fi)==1));
         cprivada=get<1>(Euclides(cpublica,fi));
+        while (cprivada<0)
+            cprivada=cprivada+fi;
+        
+        //IMPRIMIENDO LAS CLAVES
+            cout<<"Modulo: "<<n<<endl;
+            cout<<"Clave Publica: "<<cpublica<<endl;
+            cout<<"Clave Privada: "<<cprivada<<endl;
+        
     }
     static vector<InfInt> Encriptar(string mensaje,InfInt modulo,InfInt e){
 
