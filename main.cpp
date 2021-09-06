@@ -2,8 +2,10 @@
 #include<stdlib.h>
 #include<string>
 #include<vector>
+#include<tuple>
 #include"InfInt.h"
 /*
+    -------------------------INFINT.H------------------------------
     Estamos usando una libreria de GitHub para poder obtener una clase
     llamada InfInt ya que esta clase no ayudara a almacenar enteros con 
     mayor tamaño. Los long int no tiene el espacio suficiente para poder
@@ -11,6 +13,7 @@
 */
 using namespace std;
 /*
+    ------------------ALGORITMO DE EUCLIDES-----------------------
     Para poder hallar el mcd usamos el algoritmo de Euclides. Usamos el 
     paradigma de la Recursividad para poder hacerlo.
 */
@@ -20,6 +23,21 @@ InfInt Mcd(InfInt a,InfInt b){
     return a;
 }
 /*
+    --------------ALGORITMO INVERTIDO DE EUCLIDES---------------
+    Para poder hallar la clave privada debemos hacer el algoritmo
+    invertido de euclides.
+*/
+tuple<InfInt,InfInt,InfInt> Euclides(InfInt a,InfInt b){
+    if(a==0)
+        return make_tuple(b,0,1);
+    
+    InfInt mcd,x,y;
+    tie(mcd,x,y)=Euclides(b%a,a);
+    return make_tuple(mcd,y-(b/a)*x,x);
+}
+
+/*
+    -----------------RSAFUNCIONES-------------------------------
     La estructura RSAFUNCIONES sera con funciones staticas 
     porque no necesitaremos crear objetos, solo usar sus funciones
 */
@@ -37,7 +55,7 @@ struct RSAFUNCIONES{
         do{
             cout<<"Escribe e: ";cin>>cpublica;
         }while (!(cpublica<fi && Mcd(cpublica,fi)==1));
-        
+        cprivada=get<1>(Euclides(cpublica,fi));
     }
     static vector<InfInt> Encriptar(string mensaje,InfInt modulo,InfInt e){
 
