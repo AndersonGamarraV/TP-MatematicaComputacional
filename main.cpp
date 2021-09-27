@@ -32,7 +32,7 @@ tuple<InfInt,InfInt,InfInt> Euclides(InfInt a,InfInt b){
         return make_tuple(b,0,1);
     
     InfInt mcd,x,y;
-    tie(mcd,x,y)=Euclides(b%a,a);
+    tie(mcd,x,y)=Euclides(b%a,a);//Existe recursivdad
     return make_tuple(mcd,y-(b/a)*x,x);
 }
 /*
@@ -40,12 +40,12 @@ tuple<InfInt,InfInt,InfInt> Euclides(InfInt a,InfInt b){
 Se relizara esta funcion para poder hallar la potencia de cada caracter
 del mensaje elevado a la clave publica multiplicado por n que es el modulo
 */
-InfInt ModuloPotencia(InfInt base,integer_sequence exponente,InfInt modulo){
+InfInt ModuloPotencia(InfInt base,InfInt exponente,InfInt modulo){
     InfInt resultado =1;
     while (--exponente>=0)
     {
         resultado =resultado*base;
-        r%=modulo;
+        resultado%=modulo;
     }
     return resultado;
 }
@@ -68,8 +68,8 @@ struct RSAFUNCIONES{
         do{
             cout<<"Escribe e: ";cin>>cpublica;
         }while (!(cpublica<fi && Mcd(cpublica,fi)==1));
-        cprivada=get<1>(Euclides(cpublica,fi));
-        while (cprivada<0){
+        cprivada=get<1>(Euclides(cpublica,fi));//Tiene una posibilidad de que salga negativo
+        while (cprivada<0){//En caso sea negativo, este while seguira hasta que se haga positivo
             cprivada=cprivada+fi;
         }
         //IMPRIMIENDO LAS CLAVES
@@ -85,8 +85,28 @@ struct RSAFUNCIONES{
         }
         return resultado;
     }
-    static string Desencriptar(string mensaje,InfInt modulo,InfInt e){
-
+    static string Desencriptar(string mensaje,InfInt cprivada, InfInt modulo){
+        vector<InfInt> msg;
+        string resultado;
+        string temporal("");
+        for(auto c:mensaje){
+            if(c=='-'){
+                msg.push_back(temporal);//Puedes guardar string en un vector InfInt debido a que existe un constructor en la libre InfInt.h que acepta un string
+                                        //Asimiso, hace el constructor hace uso de un metodo llamada fromString, que tiene como parametro un string
+                temporal="";
+            }
+            else
+                temporal=temporal+c;
+        }
+        if(temporal.length()>0){
+            msg.push_back(temporal);
+        }
+        
+        for(auto c : msg){
+            auto numero = ModuloPotencia(c,cprivada,modulo);
+            resultado = resultado+(char)(numero.toInt());
+        }
+        return resultado;
     }
 };
 
@@ -95,19 +115,40 @@ int main(){
     while (true)
     {
         unsigned short opcion;
-        cout<<"1.-Generar Claves\n2.-Encriptar\n3.-Desencriptar\n4.-Salir"<<endl;
+        cout<<"\n1.-Generar Claves\n2.-Encriptar\n3.-Desencriptar\n4.-Salir"<<endl;
         cout<<"¿Que quieres hacer? ";
         cin>>opcion;
-        switch (opcion)
-        {
-        case 1: 
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
+        switch (opcion){
+            case 1: {
+                RSAFUNCIONES::Generar();
+                break;
+            }
+            case 2:{
+                string mensaje;
+                InfInt e,n;
+                cout<<"Escribe el mensaje: "; cin.ignore();
+                getline(cin,mensaje);
+                cout<< "Clave Publica (e): "; cin>>e;
+                cout<<"Modulo (n): ";cin>>n;
+                auto resultado = RSAFUNCIONES::Encriptar(mensaje,e,n);
+                for(auto n : resultado){
+                    cout<<n<<"-";
+                }
+                break;
+            }
+            case 3:{
+                string mensaje;
+                InfInt d,n;
+                cout<<"Escribe el mensaje: "; cin.ignore();
+                getline(cin,mensaje);
+                cout<< "Clave Privada (d): "; cin>>d;
+                cout<<"Modulo (n): ";cin>>n;
+                auto resultado = RSAFUNCIONES::Desencriptar(mensaje,d,n);
+                cout<<resultado;
+                break;
+            }
         default:
-            return 1;
+            break;
         }
     }
     
